@@ -29,15 +29,16 @@ shape = data.shape
 
 #correlation
 #Glucose, BMI, Age, Pregnancies have good correlation with Outcome
-"""
 corr = data.corr()
 plt.figure()
 sns.heatmap(corr, annot=True)
 plt.show()
-"""
+
 
 null = data.isnull().sum()
 na = data.isna().sum()
+
+print(data.columns)
 
 #zero cant acceptable for this columns
 zero_not_accepted = ["Glucose", "BloodPressure", "SkinThickness",
@@ -51,8 +52,44 @@ print("Number of zeros of BMI column is "+str(data.BMI[data.BMI==0].count()))
 
 zero_not_accepted = ["Glucose", "BloodPressure", "SkinThickness",
                     "Insulin", "BMI"]
+
 for i in zero_not_accepted:
     data[i].replace(0, data[i].mean(), inplace=True)
+
+#plot after replace zeros
+plt.figure()
+data.hist(figsize=(20,20))
+
+def distplot(col_name):
+
+    plt.figure()
+    ax = sns.distplot(data[col_name][data.Outcome == 1], color ="red", rug = True)
+    sns.distplot(data[col_name][data.Outcome == 0], color ="lightblue",rug = True)
+    plt.legend(['Diabetes', 'No Diabetes'])
+
+plt.figure()
+sns.swarmplot(x = 'Outcome', y = 'Pregnancies', data = data)
+
+distplot('Glucose')
+
+
+distplot('BloodPressure')
+
+plt.figure()
+sns.boxplot(x = 'Outcome', y = 'SkinThickness', data = data)
+
+plt.figure()
+sns.boxplot(x="Outcome", y='Insulin', data = data)
+
+plt.figure()
+sns.boxplot(x = 'Outcome', y = 'BMI', data = data)
+
+distplot("DiabetesPedigreeFunction")
+
+plt.figure()
+sns.swarmplot(x = 'Outcome', y = 'Age', data = data)
+
+
     
 #splitting dataset into train%80 and test%20
 y = data.Outcome
